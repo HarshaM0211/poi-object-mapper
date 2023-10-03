@@ -17,6 +17,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 /**
  * Spreadsheet related utilites.
  */
@@ -36,6 +37,7 @@ public final class Spreadsheet {
      * Splits the CellReference and returns only the column reference.
      * 
      * @param cellRef the cell reference value (ex. D3)
+     * 
      * @return returns the column index "D" from the cell reference "D3"
      */
     public static String getCellColumnReference(String cellRef) {
@@ -62,11 +64,9 @@ public final class Spreadsheet {
             String fieldName = f.getName();
 
             SheetColumn ec = f.getAnnotation(SheetColumn.class);
-            
+
             if (ec != null) {
-                String value = StringUtils.isNotEmpty(ec.value())
-                        ? ec.value()
-                        : fieldName;
+                String value = StringUtils.isNotEmpty(ec.value()) ? ec.value() : fieldName;
                 mapping.put(fieldName, value);
             }
         }
@@ -79,9 +79,7 @@ public final class Spreadsheet {
             SheetColumn ec = m.getAnnotation(SheetColumn.class);
 
             if (ec != null && !mapping.containsKey(fieldName)) {
-                String value = StringUtils.isNotEmpty(ec.value())
-                        ? ec.value()
-                        : fieldName;
+                String value = StringUtils.isNotEmpty(ec.value()) ? ec.value() : fieldName;
                 mapping.put(fieldName, value);
             }
         }
@@ -107,45 +105,40 @@ public final class Spreadsheet {
     public static List<String> getColumnNames(Class<?> beanType) {
         // Bean Property to Column Mapping
         final Map<String, String> propToColumnMap = getPropertyToColumnNameMap(beanType);
-        final Map<Integer,String> indexToPropMap = getColumnIndexToPropertyMap(beanType);
-        
-        if(indexToPropMap.size() > 1) {
-        	
-        	Set<Integer> indexes = indexToPropMap.keySet();
+        final Map<Integer, String> indexToPropMap = getColumnIndexToPropertyMap(beanType);
+
+        if (indexToPropMap.size() > 1) {
+
+            Set<Integer> indexes = indexToPropMap.keySet();
             List<Integer> indexList = new ArrayList<Integer>(indexes);
             Collections.sort(indexList);
-            
+
             ArrayList<String> columnNames = new ArrayList<>();
-            
-            for(Integer index : indexToPropMap.keySet())
-            {
-            	String colValue = propToColumnMap.get(indexToPropMap.get(index));
-            	columnNames.add(colValue);
+
+            for (Integer index : indexToPropMap.keySet()) {
+                String colValue = propToColumnMap.get(indexToPropMap.get(index));
+                columnNames.add(colValue);
             }
-            
+
             ArrayList<String> columnNamesDup = new ArrayList<>(propToColumnMap.values());
-            
-            for(String str : columnNamesDup)
-            {
-            	if(columnNames.contains(str)){
-            		continue;
-            	}
-            	else{
-            		columnNames.add(str);
-            	}
+
+            for (String str : columnNamesDup) {
+                if (columnNames.contains(str)) {
+                    continue;
+                } else {
+                    columnNames.add(str);
+                }
             }
             return columnNames;
+        } else {
+            ArrayList<String> columnNames = new ArrayList<>(propToColumnMap.values());
+            return columnNames;
         }
-        else {
-        	ArrayList<String> columnNames = new ArrayList<>(propToColumnMap.values());
-        	return columnNames;
-        }
-        
-        
+
+
     }
 
 
-    
 
     // Read from Bean : as Row Data
     // ------------------------------------------------------------------------
@@ -236,15 +229,15 @@ public final class Spreadsheet {
         return null;
     }
 
-    
-    public static Map<Integer,String> getColumnIndexToPropertyMap(Class<?> beanType) {
+
+    public static Map<Integer, String> getColumnIndexToPropertyMap(Class<?> beanType) {
         // Sanity checks
         if (beanType == null) {
             throw new IllegalArgumentException("getColumnToIndexMap :: Invalid ExcelBean type - " + beanType);
         }
 
         // Property to Column Index Mapping
-        final Map<Integer,String> mapping = new HashMap<Integer,String>();
+        final Map<Integer, String> mapping = new HashMap<Integer, String>();
 
         // Fields
         Field[] fields = beanType.getDeclaredFields();
@@ -252,10 +245,10 @@ public final class Spreadsheet {
             String fieldName = f.getName();
 
             SheetColumn ec = f.getAnnotation(SheetColumn.class);
-            
+
             if (ec != null) {
                 int index = ec.index();
-                mapping.put(index,fieldName);
+                mapping.put(index, fieldName);
             }
         }
 
@@ -268,7 +261,7 @@ public final class Spreadsheet {
 
             if (ec != null) {
                 int index = ec.index();
-                mapping.put(index,fieldName);
+                mapping.put(index, fieldName);
             }
         }
 
